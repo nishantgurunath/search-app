@@ -1,18 +1,12 @@
 version: "3"
 services:
-  medium-search-app:
+  kyc-search-app:
     build:
-      context: ./
+      context: ./ 
     container_name: search-app
     ports: 
       - 19996:8501
-    networks:
-      maa-ml-cre:
 
 volumes:
   esdata:
     driver: local
-
-networks:
-  maa-ml-cre:
-    external: true

@@ -44,10 +44,10 @@ def index_search(es, index: str, name: str, address: str, dob: str, filters: str
     match_options = []
     name_match = {"match": {"entityname": {"query": name, "boost":2}}}
     match_options.append(name_match)
-    if address:
+    if address and address != "None":
         address_match = {"match": {"address": address}} 
         match_options.append(address_match)
-    if dob:
+    if dob and dob != "None":
         dob_match = {"match": {"dob": dob}} 
         match_options.append(dob_match)
                 
