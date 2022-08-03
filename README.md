@@ -13,11 +13,10 @@ source ./create_env
 Since this app depends on the elasticsearch container, it is preferable to use docker compose. 
 Before getting started, let's build the docker container of this app
 ```
-docker build -t medium-search-app .
+docker-compose build
 ```
 Then use docker compose:
 ```
-source env/bin/activate
 docker-compose up
 # the webapp should be available in localhost:8501
 ```
