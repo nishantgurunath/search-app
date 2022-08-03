@@ -119,6 +119,14 @@ def no_result_html() -> str:
         </div><br>
     """
 
+def no_name_html() -> str:
+    """ """
+    return """
+        <div style="color:grey;font-size:95%;margin-top:0.5em;">
+            Name is required.
+        </div><br>
+    """
+
 
 def number_of_results(total_hits: int, duration: float) -> str:
     """ HTML scripts to display number of results and time taken. """
@@ -129,11 +137,11 @@ def number_of_results(total_hits: int, duration: float) -> str:
     """
 
 
-def pagination(total_pages: int, search: str, current_page: int,
+def pagination(total_pages: int, search_name: str, search_address: str, search_dob: str, current_page: int,
                tags: str) -> str:
     """ Create and return html for pagination. """
     # search words and tags
-    params = f'?search={urllib.parse.quote(search)}'
+    params = f'?search_name={urllib.parse.quote(search_name)}&search_address={urllib.parse.quote(search_address)}&search_dob={urllib.parse.quote(search_dob)}'
     if tags is not None:
         params += f'&tags={tags}'
 
@@ -160,14 +168,14 @@ def pagination(total_pages: int, search: str, current_page: int,
     return '<div>' + '&emsp;'.join(hrefs) + '</div>'
 
 
-def search_result(i: int, url: str, title: str, highlights: str,
-                  author: str, length: str, **kwargs) -> str:
+def search_result(i: int, url: str, entityid: str, entityname: str,
+                  address: str, dob: str, score: float, **kwargs) -> str:
     """ HTML scripts to display search results. """
     return f"""
         <div style="font-size:120%;">
             {i + 1}.
             <a href="{url}">
-                {title}
+                {entityname}
             </a>
         </div>
         <div style="font-size:95%;">
@@ -175,12 +183,15 @@ def search_result(i: int, url: str, title: str, highlights: str,
                 {url[:90] + '...' if len(url) > 100 else url}
             </div>
             <div style="float:left;font-style:italic;">
-                {author} ·&nbsp;
+                {entityid} ·&nbsp;
             </div>
             <div style="color:grey;float:left;">
-                {length} ...
+                {address} ...
             </div>
-            {highlights}
+            <div style="color:grey;float:left;">
+                {dob} ...
+            </div>
+            {score}
         </div>
     """
 
