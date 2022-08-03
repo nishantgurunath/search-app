@@ -1,6 +1,5 @@
-# medium-search-app
-A simple search engine to search medium stories built with streamlit and elasticsearch. 
-The demo of this app is available on [Heroku](https://medium-search-app.herokuapp.com/).
+# search-app
+A simple search engine to search entities built with streamlit and elasticsearch. 
 
 ## Prepare Environments
 The codes were tested and ran on Ubuntu 18.04 using python 3.7. 
