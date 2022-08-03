@@ -1,7 +1,8 @@
 version: "3"
 services:
-  web:
-    image: medium-search-app
+  medium-search-app:
+    build:
+      context: ./
     container_name: search-app
     ports: 
       - 19996:8501
