@@ -38,49 +38,52 @@ def safe_check_index(es, index: str, retry: int = 3):
         safe_check_index(es, index, retry - 1)
 
 
-def index_search(es, index: str, keywords: str, filters: str, from_i: int,
+def index_search(es, index: str, name: str, address: str, dob: str, filters: str, from_i: int,
                  size: int) -> dict:
     """ """
+    match_options = []
+    name_match = {"match": {"entityname": {"query": name, "boost":2}}}
+    match_options.append(name_match)
+    if address and address != "None":
+        address_match = {"match": {"address": address}} 
+        match_options.append(address_match)
+    if dob and dob != "None":
+        dob_match = {"match": {"dob": dob}} 
+        match_options.append(dob_match)
+                
     body = {
         'query': {
             'bool': {
-                'must': [
-                    {
-                        'query_string': {
-                            'query': keywords,
-                            'fields': ['content'],
-                            'default_operator': 'AND',
-                        }
-                    }
-                ],
+                'must': match_options
             }
         },
-        'highlight': {
-            'pre_tags': ['<b>'],
-            'post_tags': ['</b>'],
-            'fields': {'content': {}}
-        },
+        # 'highlight': {
+        #     'pre_tags': ['<b>'],
+        #     'post_tags': ['</b>'],
+        #     'fields': {'entityname': {}}
+        # },
         'from': from_i,
         'size': size,
         'aggs': {
-            'tags': {
-                'terms': {'field': 'tags'}
+            'entityid': {
+                'terms': {'field': 'entityid'}
             },
             'match_count': {'value_count': {'field': '_id'}}
         }
     }
-    if filters is not None:
-        body['query']['bool']['filter'] = {
-            'terms': {
-                'tags': [filters]
-            }
-        }
+    # if filters is not None:
+    #     body['query']['bool']['filter'] = {
+    #         'terms': {
+    #             'tags': [filters]
+    #         }
+    #     }
 
     res = es.search(index=index, body=body)
     # sort popular tags
-    sorted_tags = res['aggregations']['tags']['buckets']
-    sorted_tags = sorted(sorted_tags, key=lambda t: t['doc_count'], reverse=True)
-    res['sorted_tags'] = [t['key'] for t in sorted_tags]
+    #sorted_tags = res['aggregations']['tags']['buckets']
+    #sorted_tags = sorted(sorted_tags, key=lambda t: t['doc_count'], reverse=True)
+    #res['sorted_tags'] = [t['key'] for t in sorted_tags]
+    res["sorted_tags"] = []
     return res
 
 
@@ -116,12 +119,14 @@ def shorten_title(title: str, limit: int = 65) -> str:
 @st.cache(show_spinner=False)
 def simplify_es_result(result: dict) -> dict:
     """ """
+    score = result["_score"]
     res = result['_source']
     res['url'] = result['_id']
+    res["score"] = score
     # join list of highlights into a sentence
-    res['highlights'] = '...'.join(result['highlight']['content'])
+    #res['highlights'] = '...'.join(result['highlight']['entityname'])
     # limit the number of characters in the title
-    res['title'] = shorten_title(res['title'])
+    #res['title'] = shorten_title(res['title'])
     return res
 
 
